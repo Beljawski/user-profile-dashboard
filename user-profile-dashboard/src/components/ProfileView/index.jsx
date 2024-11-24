@@ -6,6 +6,7 @@ import s from './index.module.css';
 function ProfileView({ profileData, onEdit }) {
   return (
     <div className={shared.profile_container}>
+      <img src={profileData.avatar} alt="" />
       <form className={shared.content_container}>
         <div className={s.view_form}>
           {/* Read-Only Fields */}

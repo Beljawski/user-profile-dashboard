@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import s from './index.module.css';
-import shared from '../../shared.module.css'
-import AvatarUpload from '../AvatarUpload';
+import shared from '../../shared.module.css';
 
 // Validation rules for form fields
 const validationRules = {
@@ -61,6 +60,8 @@ function ProfileEdit({ profileData, onSave }) {
   );
   const [links, setLinks] = useState(profileData?.links || []);
   const [showProfile, setShowProfile] = useState(profileData?.showProfile || 'private');
+  const [avatar, setAvatar] = useState(profileData?.avatar || '');
+  const [avatarError, setAvatarError] = useState('');
 
   // Predefined fields for the form
   const fields = [
@@ -73,8 +74,28 @@ function ProfileEdit({ profileData, onSave }) {
 
   // Handle form submission
   const onSubmit = (data) => {
-    // Combine dynamic field data with form data before saving
-    onSave({ ...data, interests, potentialInterests, links, showProfile });
+    if (avatarError) return; // Prevent submission if avatar error exists
+    onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
+  };
+
+  // Handle avatar upload
+  const handleAvatarChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file size (limit: 5 MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarError('File size exceeds 5 MB');
+      return;
+    }
+
+    setAvatarError(''); // Clear error if file size is valid
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result); // Base64 string of the image
+    };
+    reader.readAsDataURL(file);
   };
 
   // Render validation error messages
@@ -121,94 +142,69 @@ function ProfileEdit({ profileData, onSave }) {
     </div>
   );
 
-  // Handle dynamic list updates for links (name and url)
-  const handleUpdateLink = (index, field, value) => {
-    const updatedLinks = [...links];
-    updatedLinks[index][field] = value;
-    setLinks(updatedLinks);
-  };
-
   return (
     <div className={shared.profile_container}>
-    <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
-      {/* Render standard input fields with validation */}
-      {fields.map(({ name, placeholder, type = 'text' }) => (
-        <div key={name}>
-          <input
-            type={type}
-            placeholder={placeholder}
-            className={s.input}
-            {...register(name, validationRules[name])}
-          />
-          {renderError(name)}
+      <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
+        {/* Avatar Upload */}
+        <div className={s.avatar_container}>
+          {avatar && <img src={avatar} alt="Avatar" className={s.avatar} />}
+          <input type="file" accept="image/*" onChange={handleAvatarChange} />
+          {avatarError && <p className={s.error_content}>{avatarError}</p>}
         </div>
-      ))}
 
-      {/* Radio buttons for profile visibility */}
-      <div>
-        <label>Show your profile in Launchpad?</label>
-        <div className={s.radioGroup}>
-          {['private', 'public'].map((option) => (
-            <label key={option}>
-              <input
-                type="radio"
-                value={option}
-                checked={showProfile === option}
-                onChange={() => setShowProfile(option)}
-              />
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Dynamic fields for interests, potential interests, and links */}
-      <div>
-        <label>The scopes of your interest:</label>
-        <button type="button" onClick={() => handleAddItem(setInterests, interests)}>
-          +
-        </button>
-        {renderTagInputs(interests, setInterests, 'Interest')}
-      </div>
-
-      <div>
-        <label>Potential interests:</label>
-        <button
-          type="button"
-          onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}>
-          +
-        </button>
-        {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
-      </div>
-
-      {/* Dynamic Links */}
-      <div className={s.links_container}>
-        <label>Your links:</label>
-        {links.map((link, index) => (
-          <div key={index} className={s.link_item}>
+        {/* Render standard input fields with validation */}
+        {fields.map(({ name, placeholder, type = 'text' }) => (
+          <div key={name}>
             <input
-              type="text"
-              placeholder="Site Name"
-              value={link.name}
-              onChange={(e) => handleUpdateLink(index, 'name', e.target.value)}
+              type={type}
+              placeholder={placeholder}
               className={s.input}
+              {...register(name, validationRules[name])}
             />
-            <input
-              type="url"
-              placeholder="URL"
-              value={link.url}
-              onChange={(e) => handleUpdateLink(index, 'url', e.target.value)}
-              className={s.input}
-            />
-            <button type="button" onClick={() => handleRemoveItem(setLinks, links, index)} className={s.remove_button}>✕</button>
+            {renderError(name)}
           </div>
         ))}
-        <button type="button" onClick={() => handleAddItem(setLinks, links, { name: '', url: '' })} className={shared.button}>+ Add Link</button>
-      </div>
 
-      {/* Submit button to save the form */}
-      <button type="submit" className={shared.button}>Save</button>
-    </form>
+        {/* Radio buttons for profile visibility */}
+        <div>
+          <label>Show your profile in Launchpad?</label>
+          <div className={s.radioGroup}>
+            {['private', 'public'].map((option) => (
+              <label key={option}>
+                <input
+                  type="radio"
+                  value={option}
+                  checked={showProfile === option}
+                  onChange={() => setShowProfile(option)}
+                />
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Dynamic fields for interests and links */}
+        <div>
+          <label>The scopes of your interest:</label>
+          <button type="button" onClick={() => handleAddItem(setInterests, interests)}>
+            +
+          </button>
+          {renderTagInputs(interests, setInterests, 'Interest')}
+        </div>
+
+        <div>
+          <label>Potential interests:</label>
+          <button
+            type="button"
+            onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}>
+            +
+          </button>
+          {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
+        </div>
+
+        {/* Submit button to save the form */}
+        <button type="submit" className={shared.button}>Save</button>
+      </form>
     </div>
   );
 }
