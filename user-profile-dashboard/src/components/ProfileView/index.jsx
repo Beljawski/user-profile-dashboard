@@ -1,12 +1,11 @@
 import React from 'react';
 import shared from '../../shared.module.css';
 import s from './index.module.css';
-import AvatarUpload from '../AvatarUpload';
+
 
 function ProfileView({ profileData, onEdit }) {
   return (
     <div className={shared.profile_container}>
-      <AvatarUpload />
       <form className={shared.content_container}>
         <div className={s.view_form}>
           {/* Read-Only Fields */}

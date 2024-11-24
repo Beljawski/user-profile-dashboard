@@ -130,7 +130,6 @@ function ProfileEdit({ profileData, onSave }) {
 
   return (
     <div className={shared.profile_container}>
-      <AvatarUpload/>
     <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
       {/* Render standard input fields with validation */}
       {fields.map(({ name, placeholder, type = 'text' }) => (
