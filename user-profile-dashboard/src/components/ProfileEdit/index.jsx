@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import s from './index.module.css';
 import shared from '../../shared.module.css';
+import ReactAvatarEditor from 'react-avatar-editor';
 
 // Validation rules for form fields
 const validationRules = {
@@ -53,30 +54,17 @@ function ProfileEdit({ profileData, onSave }) {
     defaultValues: profileData, // Use initial data as default form values
   });
 
-  // State hooks for managing dynamic fields
+  // State hooks for dynamic fields
   const [interests, setInterests] = useState(profileData?.interests || []);
   const [potentialInterests, setPotentialInterests] = useState(
-    profileData?.potentialInterests || [],
+    profileData?.potentialInterests || []
   );
   const [links, setLinks] = useState(profileData?.links || []);
   const [showProfile, setShowProfile] = useState(profileData?.showProfile || 'private');
   const [avatar, setAvatar] = useState(profileData?.avatar || '');
   const [avatarError, setAvatarError] = useState('');
-
-  // Predefined fields for the form
-  const fields = [
-    { name: 'name', placeholder: 'Name' },
-    { name: 'lastName', placeholder: 'Last Name' },
-    { name: 'jobTitle', placeholder: 'Job Title' },
-    { name: 'phone', placeholder: 'Phone', type: 'tel' },
-    { name: 'email', placeholder: 'Email', type: 'email' },
-  ];
-
-  // Handle form submission
-  const onSubmit = (data) => {
-    if (avatarError) return; // Prevent submission if avatar error exists
-    onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
-  };
+  const [selectedFile, setSelectedFile] = useState(null);
+  const editorRef = useRef(null);
 
   // Handle avatar upload
   const handleAvatarChange = (event) => {
@@ -89,79 +77,87 @@ function ProfileEdit({ profileData, onSave }) {
       return;
     }
 
-    setAvatarError(''); // Clear error if file size is valid
+    setAvatarError('');
+    setSelectedFile(file); // Set file for cropping
+  };
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setAvatar(reader.result); // Base64 string of the image
-    };
-    reader.readAsDataURL(file);
+  const handleSaveAvatar = () => {
+    if (editorRef.current) {
+      const canvas = editorRef.current.getImageScaledToCanvas().toDataURL();
+      setAvatar(canvas); // Update avatar state with cropped image
+      setSelectedFile(null); // Close the cropping editor
+    }
   };
 
   // Render validation error messages
   const renderError = (fieldName) =>
     errors[fieldName] && <p className={s.error_content}>{errors[fieldName]?.message}</p>;
 
-  // General function to add new items to dynamic lists
+  // Dynamic field handlers
   const handleAddItem = (setter, list, newItem = '') => {
     if (list.length < 10) setter([...list, newItem]);
   };
 
-  // General function to remove items from dynamic lists
   const handleRemoveItem = (setter, list, index) => {
     setter(list.filter((_, i) => i !== index));
   };
 
-  // Update a specific item in a dynamic list
   const handleUpdateItem = (setter, list, index, value) => {
     const updatedList = [...list];
     updatedList[index] = value;
     setter(updatedList);
   };
 
-  // Render input fields for dynamic lists (tags or links)
-  const renderTagInputs = (list, setter, placeholder) => (
-    <div className={s.tagContainer}>
-      {list.map((item, index) => (
-        <div key={index} className={s.tag}>
-          <input
-            type="text"
-            className={s.input}
-            placeholder={`${placeholder} #${index + 1}`}
-            value={item}
-            onChange={(e) => handleUpdateItem(setter, list, index, e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => handleRemoveItem(setter, list, index)}
-            className={s.removeButton}>
-            ✕
-          </button>
-        </div>
-      ))}
-    </div>
-  );
+  // Submit form
+  const onSubmit = (data) => {
+    if (avatarError) return; // Prevent submission if avatar error exists
+    onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
+  };
 
   return (
     <div className={shared.profile_container}>
       <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
         {/* Avatar Upload */}
         <div className={s.avatar_container}>
-          {avatar && <img src={avatar} alt="Avatar" className={s.avatar} />}
-          <input type="file" accept="image/*" onChange={handleAvatarChange} />
+          {selectedFile ? (
+            <>
+              <ReactAvatarEditor
+                ref={editorRef}
+                image={selectedFile}
+                width={120}
+                height={120}
+                border={50}
+                borderRadius={60}
+                scale={1.2}
+              />
+              <div className={s.avatar_buttons}>
+                <button type="button" onClick={handleSaveAvatar}>
+                  Save Cropped Image
+                </button>
+                <button type="button" onClick={() => setSelectedFile(null)}>
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {avatar && <img src={avatar} alt="Avatar" className={s.avatar} />}
+              <input type="file" accept="image/*" onChange={handleAvatarChange} />
+            </>
+          )}
           {avatarError && <p className={s.error_content}>{avatarError}</p>}
         </div>
 
-        {/* Render standard input fields with validation */}
-        {fields.map(({ name, placeholder, type = 'text' }) => (
-          <div key={name}>
+        {/* Standard input fields */}
+        {['name', 'lastName', 'jobTitle', 'phone', 'email'].map((field) => (
+          <div key={field}>
             <input
-              type={type}
-              placeholder={placeholder}
+              type={field === 'email' ? 'email' : 'text'}
+              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
               className={s.input}
-              {...register(name, validationRules[name])}
+              {...register(field, validationRules[field])}
             />
-            {renderError(name)}
+            {renderError(field)}
           </div>
         ))}
 
@@ -189,21 +185,28 @@ function ProfileEdit({ profileData, onSave }) {
           <button type="button" onClick={() => handleAddItem(setInterests, interests)}>
             +
           </button>
-          {renderTagInputs(interests, setInterests, 'Interest')}
+          <div className={s.tagContainer}>
+            {interests.map((item, index) => (
+              <div key={index} className={s.tag}>
+                <input
+                  type="text"
+                  value={item}
+                  onChange={(e) =>
+                    handleUpdateItem(setInterests, interests, index, e.target.value)
+                  }
+                />
+                <button onClick={() => handleRemoveItem(setInterests, interests, index)}>
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div>
-          <label>Potential interests:</label>
-          <button
-            type="button"
-            onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}>
-            +
-          </button>
-          {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
-        </div>
-
-        {/* Submit button to save the form */}
-        <button type="submit" className={shared.button}>Save</button>
+        {/* Submit */}
+        <button type="submit" className={shared.button}>
+          Save
+        </button>
       </form>
     </div>
   );
