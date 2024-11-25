@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import s from './index.module.css';
 import shared from '../../shared.module.css';
@@ -51,49 +51,53 @@ function ProfileEdit({ profileData, onSave }) {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: profileData, // Use initial data as default form values
+    defaultValues: profileData,
   });
 
-  // State hooks for dynamic fields
   const [interests, setInterests] = useState(profileData?.interests || []);
   const [potentialInterests, setPotentialInterests] = useState(
-    profileData?.potentialInterests || []
+    profileData?.potentialInterests || [],
   );
   const [links, setLinks] = useState(profileData?.links || []);
   const [showProfile, setShowProfile] = useState(profileData?.showProfile || 'private');
   const [avatar, setAvatar] = useState(profileData?.avatar || '');
   const [avatarError, setAvatarError] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-  const editorRef = useRef(null);
+  const [editor, setEditor] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
 
-  // Handle avatar upload
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Check file size (limit: 5 MB)
     if (file.size > 5 * 1024 * 1024) {
       setAvatarError('File size exceeds 5 MB');
       return;
     }
 
     setAvatarError('');
-    setSelectedFile(file); // Set file for cropping
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveAvatar = () => {
-    if (editorRef.current) {
-      const canvas = editorRef.current.getImageScaledToCanvas().toDataURL();
-      setAvatar(canvas); // Update avatar state with cropped image
-      setSelectedFile(null); // Close the cropping editor
+    if (editor) {
+      const canvas = editor.getImageScaledToCanvas().toDataURL();
+      setAvatarPreview(canvas);
+      setAvatar(canvas);
     }
   };
 
-  // Render validation error messages
+  const onSubmit = (data) => {
+    if (avatarError) return;
+    onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
+  };
+
   const renderError = (fieldName) =>
     errors[fieldName] && <p className={s.error_content}>{errors[fieldName]?.message}</p>;
 
-  // Dynamic field handlers
   const handleAddItem = (setter, list, newItem = '') => {
     if (list.length < 10) setter([...list, newItem]);
   };
@@ -108,42 +112,41 @@ function ProfileEdit({ profileData, onSave }) {
     setter(updatedList);
   };
 
-  // Submit form
-  const onSubmit = (data) => {
-    if (avatarError) return; // Prevent submission if avatar error exists
-    onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
-  };
-
   return (
     <div className={shared.profile_container}>
       <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
         {/* Avatar Upload */}
         <div className={s.avatar_container}>
-          {selectedFile ? (
-            <>
-              <ReactAvatarEditor
-                ref={editorRef}
-                image={selectedFile}
-                width={120}
-                height={120}
-                border={50}
-                borderRadius={60}
-                scale={1.2}
-              />
-              <div className={s.avatar_buttons}>
-                <button type="button" onClick={handleSaveAvatar}>
-                  Save Cropped Image
-                </button>
-                <button type="button" onClick={() => setSelectedFile(null)}>
-                  Cancel
-                </button>
-              </div>
-            </>
+          {avatar ? (
+            <ReactAvatarEditor
+              ref={(ref) => setEditor(ref)}
+              image={avatar}
+              width={120}
+              height={120}
+              borderRadius={60}
+              scale={1.2}
+            />
           ) : (
-            <>
-              {avatar && <img src={avatar} alt="Avatar" className={s.avatar} />}
-              <input type="file" accept="image/*" onChange={handleAvatarChange} />
-            </>
+            <p>No image selected</p>
+          )}
+
+          <div className={s.fileUploadContainer}>
+            <label htmlFor="fileUpload" className={s.customFileUpload}>
+              Select Image
+            </label>
+            <input
+              id="fileUpload"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className={s.hiddenFileInput}
+            />
+          </div>
+
+          {avatar && (
+            <button type="button" onClick={handleSaveAvatar} className={s.saveButton}>
+              Save Cropped Image
+            </button>
           )}
           {avatarError && <p className={s.error_content}>{avatarError}</p>}
         </div>
@@ -191,13 +194,9 @@ function ProfileEdit({ profileData, onSave }) {
                 <input
                   type="text"
                   value={item}
-                  onChange={(e) =>
-                    handleUpdateItem(setInterests, interests, index, e.target.value)
-                  }
+                  onChange={(e) => handleUpdateItem(setInterests, interests, index, e.target.value)}
                 />
-                <button onClick={() => handleRemoveItem(setInterests, interests, index)}>
-                  ✕
-                </button>
+                <button onClick={() => handleRemoveItem(setInterests, interests, index)}>✕</button>
               </div>
             ))}
           </div>

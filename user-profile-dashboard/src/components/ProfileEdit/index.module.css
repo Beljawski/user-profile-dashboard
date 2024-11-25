@@ -42,3 +42,30 @@
     object-fit: cover; /* Schneidet das Bild passend zu */
     border: 2px solid #ccc; /* Optional: Rahmen */
   }
+  .fileUploadContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .customFileUpload {
+    background-color: #007bff; /* Blau als Beispiel */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    border: none;
+  }
+  
+  .customFileUpload:hover {
+    background-color: #0056b3;
+  }
+  
+  .hiddenFileInput {
+    display: none; /* Versteckt das eigentliche Input-Element */
+  }
+  
