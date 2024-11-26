@@ -1,4 +1,4 @@
-.profile_container{
+.profile_container {
     position: absolute;
     top: 143px;
     right: 59px;
@@ -8,17 +8,61 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; 
-}
-
-.avatar_container{
-    width: 120px;
-    height: 120px;
-    background-color: #D9D9D9;
-    border-radius: 50%;
-    position: relative;
-    margin-bottom: 27px;
-}
-.button{
+    align-items: center;
     
 }
+
+.content_container {
+    width: 695px;
+    display: flex;
+    flex-direction: column;
+}
+
+.content_container > :nth-child(1),
+.content_container > :nth-child(2){
+    align-self: center;
+  }
+.avatar_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 120px;
+    height: 120px;
+    margin-bottom: 27px;
+    background-color: #D9D9D9;
+    border-radius: 50%;
+}
+.input_container{
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 32px;
+}
+.input{
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 23px;
+    padding: 23px 20px;
+    border: solid 1.4px #00000061;
+    border-radius: 11px;
+    background-color: transparent;
+}
+.input::placeholder {
+    color: #00000099;   
+}
+.input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.388);
+}
+
+.input:not(:placeholder-shown) {
+    background-color: transparent; 
+}
+
+.label{
+    font-size: 24px;
+    margin-top: 32px;
+}
+

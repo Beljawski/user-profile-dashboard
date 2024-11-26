@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import s from './index.module.css';
 import shared from '../../shared.module.css';
 import ReactAvatarEditor from 'react-avatar-editor';
+import Placeholder from '../../assets/images/avatar_placeholder.svg';
+import { VscSaveAs } from 'react-icons/vsc';
+import { RiDeleteBin5Line } from 'react-icons/ri';
 
 // Validation rules for form fields
 const validationRules = {
@@ -65,29 +68,37 @@ function ProfileEdit({ profileData, onSave }) {
   const [editor, setEditor] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
 
+    // Handle avatar upload
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
+
+    // Check file size (limit: 5 MB)
     if (file.size > 5 * 1024 * 1024) {
       setAvatarError('File size exceeds 5 MB');
       return;
     }
 
-    setAvatarError('');
+    setAvatarError(''); // Clear error if file size is valid
     const reader = new FileReader();
     reader.onloadend = () => {
-      setAvatar(reader.result);
+      setAvatar(reader.result); // Base64 string of the image
     };
     reader.readAsDataURL(file);
   };
 
   const handleSaveAvatar = () => {
     if (editor) {
-      const canvas = editor.getImageScaledToCanvas().toDataURL();
-      setAvatarPreview(canvas);
-      setAvatar(canvas);
+      const roundedAvatar = editor.getImageScaledToCanvas().toDataURL();
+      setAvatarPreview(roundedAvatar);
+      setAvatar(roundedAvatar);
     }
+  };  
+
+  const handleDeleteAvatar = () => {
+    setAvatar('');
+    setAvatarPreview('');
   };
 
   const onSubmit = (data) => {
@@ -112,61 +123,112 @@ function ProfileEdit({ profileData, onSave }) {
     setter(updatedList);
   };
 
+  // Render input fields for dynamic lists (tags or links)
+  const renderTagInputs = (list, setter, placeholder) => (
+    <div className={s.tagContainer}>
+      {list.map((item, index) => (
+        <div key={index} className={s.tag}>
+          <input
+            type="text"
+            className={s.input}
+            placeholder={`${placeholder} #${index + 1}`}
+            value={item}
+            onChange={(e) => handleUpdateItem(setter, list, index, e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => handleRemoveItem(setter, list, index)}
+            className={s.removeButton}>
+            ✕
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Handle dynamic list updates for links (name and url)
+  const handleUpdateLink = (index, field, value) => {
+    const updatedLinks = [...links];
+    updatedLinks[index][field] = value;
+    setLinks(updatedLinks);
+  };
+
+    // Add placeholder fallback for older browsers
+    // useEffect(() => {
+    //   if (!('placeholder' in document.createElement('input'))) {
+    //     const inputs = document.querySelectorAll(`.${s.input}`);
+    //     inputs.forEach((input) => {
+    //       const placeholderText = input.getAttribute('placeholder');
+    //       if (placeholderText) {
+    //         input.value = placeholderText;
+    //         input.addEventListener('focus', function () {
+    //           if (this.value === placeholderText) this.value = '';
+    //         });
+    //         input.addEventListener('blur', function () {
+    //           if (this.value === '') this.value = placeholderText;
+    //         });
+    //       }
+    //     });
+    //   }
+    // }, []);
+  
   return (
     <div className={shared.profile_container}>
       <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
         {/* Avatar Upload */}
-        <div className={s.avatar_container}>
-          {avatar ? (
-            <ReactAvatarEditor
-              ref={(ref) => setEditor(ref)}
-              image={avatar}
-              width={120}
-              height={120}
-              borderRadius={60}
-              scale={1.2}
-            />
-          ) : (
-            <p>No image selected</p>
-          )}
-
-          <div className={s.fileUploadContainer}>
-            <label htmlFor="fileUpload" className={s.customFileUpload}>
-              Select Image
-            </label>
-            <input
-              id="fileUpload"
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className={s.hiddenFileInput}
-            />
+        <div className={shared.avatar_container}>
+          <div
+            className={`${s.avatar_wrapper} ${avatar ? '' : s.selectable}`}
+            onClick={!avatar ? () => document.getElementById('fileUpload').click() : null}>
+            {avatarPreview ? (
+              <img src={avatarPreview} alt="Rounded Avatar" className={s.avatarPreview} />
+            ) : avatar ? (
+              <ReactAvatarEditor
+                ref={(ref) => setEditor(ref)}
+                image={avatar}
+                width={120}
+                height={120}
+                borderRadius={60}
+                scale={1.2}
+                style={{ border: '1px solid #ccc' }}
+              />
+            ) : (
+              <img src={Placeholder} alt="Avatar placeholder" className={s.img_placeholder} />
+            )}
           </div>
 
-          {avatar && (
-            <button type="button" onClick={handleSaveAvatar} className={s.saveButton}>
-              Save Cropped Image
-            </button>
+          <input
+            id="fileUpload"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className={s.hiddenFileInput}
+          />
+        </div>
+        <div className={s.icons_container}>
+          {avatar && !avatarPreview && (
+            <VscSaveAs onClick={handleSaveAvatar} className={s.saveButton} />
           )}
-          {avatarError && <p className={s.error_content}>{avatarError}</p>}
+          {avatar && <RiDeleteBin5Line onClick={handleDeleteAvatar} className={s.deleteButton} />}
         </div>
 
         {/* Standard input fields */}
+        <div className={shared.input_container}>
         {['name', 'lastName', 'jobTitle', 'phone', 'email'].map((field) => (
           <div key={field}>
             <input
               type={field === 'email' ? 'email' : 'text'}
               placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              className={s.input}
+              className={shared.input}
               {...register(field, validationRules[field])}
             />
             {renderError(field)}
           </div>
         ))}
-
+</div>
         {/* Radio buttons for profile visibility */}
-        <div>
-          <label>Show your profile in Launchpad?</label>
+        <div className={s.radio_visibility_container}>
+          <label className={shared.label}>Show your profile in Launchpad?</label>
           <div className={s.radioGroup}>
             {['private', 'public'].map((option) => (
               <label key={option}>
@@ -182,24 +244,58 @@ function ProfileEdit({ profileData, onSave }) {
           </div>
         </div>
 
-        {/* Dynamic fields for interests and links */}
+        {/* Dynamic fields for interests, potential interests, and links */}
         <div>
-          <label>The scopes of your interest:</label>
+          <label className={shared.label}>The scopes of your interest:</label>
           <button type="button" onClick={() => handleAddItem(setInterests, interests)}>
             +
           </button>
-          <div className={s.tagContainer}>
-            {interests.map((item, index) => (
-              <div key={index} className={s.tag}>
-                <input
-                  type="text"
-                  value={item}
-                  onChange={(e) => handleUpdateItem(setInterests, interests, index, e.target.value)}
-                />
-                <button onClick={() => handleRemoveItem(setInterests, interests, index)}>✕</button>
-              </div>
-            ))}
-          </div>
+          {renderTagInputs(interests, setInterests, 'Interest')}
+        </div>
+
+        <div>
+          <label className={shared.label}>Potential interests:</label>
+          <button
+            type="button"
+            onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}>
+            +
+          </button>
+          {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
+        </div>
+
+        {/* Dynamic Links */}
+        <div className={s.links_container}>
+          <label className={shared.label}>Your links:</label>
+          {links.map((link, index) => (
+            <div key={index} className={s.link_item}>
+              <input
+                type="text"
+                placeholder="Site Name"
+                value={link.name}
+                onChange={(e) => handleUpdateLink(index, 'name', e.target.value)}
+                className={s.input}
+              />
+              <input
+                type="url"
+                placeholder="URL"
+                value={link.url}
+                onChange={(e) => handleUpdateLink(index, 'url', e.target.value)}
+                className={s.input}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveItem(setLinks, links, index)}
+                className={s.remove_button}>
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => handleAddItem(setLinks, links, { name: '', url: '' })}
+            className={shared.button}>
+            + Add Link
+          </button>
         </div>
 
         {/* Submit */}

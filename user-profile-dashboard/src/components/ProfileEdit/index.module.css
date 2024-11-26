@@ -1,71 +1,85 @@
-/* .form {
-    margin: 143px 59px 47px 1039px;
-    background-color: azure;
+.hiddenFileInput {
+  display: none;
 }
 
-.tag-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.img_placeholder {
+  cursor: pointer;
+}
+.avatar_wrapper{
+  width: 120px;
+  height: 120px;
+ 
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; /* Zeigt, dass die Fläche klickbar ist */
 }
 
-.input {
-    padding: 5px;
-    font-size: 14px;
+.avatar_wrapper:hover {
+  background-color: #ececec; /* Visuelles Feedback bei Hover */
+}
+.error_content {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+.deleteButton, .saveButton{
+  /* border: solid 1px #49535C; */
+  /* padding: 5px 16px;
+  border-radius: 100px;
+  margin: 21px 0;
+  width: 40px;
+  height: 40px; */
 }
 
-.remove-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+.saveButton, .deleteButton  {
+  font-size: 32px; /* Beispielgröße */
+  color: #333; /* Beispiel Farbe */
 }
 
-.add-button {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-} */
-.avatar_container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .avatar {
-    /* width: 120px;
-    height: 120px; */
-    border-radius: 50%;
-    object-fit: cover; /* Schneidet das Bild passend zu */
-    border: 2px solid #ccc; /* Optional: Rahmen */
-  }
-  .fileUploadContainer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .customFileUpload {
-    background-color: #007bff; /* Blau als Beispiel */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    border: none;
-  }
-  
-  .customFileUpload:hover {
-    background-color: #0056b3;
-  }
-  
-  .hiddenFileInput {
-    display: none; /* Versteckt das eigentliche Input-Element */
-  }
-  
+.avatarPreview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+.radio_visibility_container{
+  font-size: 24px;
+}
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.tag input {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  width: auto;
+  max-width: 100px;
+}
+
+.removeButton {
+  background: transparent;
+  border: none;
+  color: #ff0000;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.removeButton:hover {
+  color: #cc0000;
+}
