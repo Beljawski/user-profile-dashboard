@@ -109,17 +109,26 @@ function ProfileEdit({ profileData, onSave }) {
   const renderError = (fieldName) =>
     errors[fieldName] && <p className={s.error_content}>{errors[fieldName]?.message}</p>;
 
-  const handleAddItem = (setter, list, newItem = '') => {
-    if (list.length < 10) setter([...list, newItem]);
+  const handleAddItem = (setter, list) => {
+    if (list.length >= 10) {
+      alert('You can enter a maximum of 10 interests.');
+      return;
+    }
+    setter([...list, '']); // Fügt ein leeres Element hinzu
   };
-
-  const handleRemoveItem = (setter, list, index) => {
-    setter(list.filter((_, i) => i !== index));
-  };
-
+  
   const handleUpdateItem = (setter, list, index, value) => {
+    if (value.length > 30) {
+      alert('Each interest must be 30 characters or less.');
+      return;
+    }
     const updatedList = [...list];
-    updatedList[index] = value;
+    updatedList[index] = value; // Aktualisiert das spezifische Element
+    setter(updatedList);
+  };
+  
+  const handleRemoveItem = (setter, list, index) => {
+    const updatedList = list.filter((_, i) => i !== index); // Entfernt das Element
     setter(updatedList);
   };
 
@@ -152,25 +161,6 @@ function ProfileEdit({ profileData, onSave }) {
     updatedLinks[index][field] = value;
     setLinks(updatedLinks);
   };
-
-    // Add placeholder fallback for older browsers
-    // useEffect(() => {
-    //   if (!('placeholder' in document.createElement('input'))) {
-    //     const inputs = document.querySelectorAll(`.${s.input}`);
-    //     inputs.forEach((input) => {
-    //       const placeholderText = input.getAttribute('placeholder');
-    //       if (placeholderText) {
-    //         input.value = placeholderText;
-    //         input.addEventListener('focus', function () {
-    //           if (this.value === placeholderText) this.value = '';
-    //         });
-    //         input.addEventListener('blur', function () {
-    //           if (this.value === '') this.value = placeholderText;
-    //         });
-    //       }
-    //     });
-    //   }
-    // }, []);
   
   return (
     <div className={shared.profile_container}>
