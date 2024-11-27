@@ -46,6 +46,7 @@
 .input {
     box-sizing: border-box;
     width: 100%;
+    width: 695px;
     font-size: 23px;
     padding: 23px 20px;
     border: solid 1.4px #00000061;
@@ -71,7 +72,9 @@
     margin: 16px 16px 16px 0;
     white-space: nowrap;
 }
-
+.radio_visibility_container {
+    font-size: 24px;
+  }
 .radio_group {
     /* margin-top: 16px; */
     display: flex;
@@ -137,37 +140,35 @@
     display: flex;
     flex-wrap: wrap;
     gap: 21px 0;
+    width: 100%; 
 }
 
 .tag {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     background-color: transparent;
     border: solid 1px #49535C;
     border-radius: 100px;
     overflow: hidden;
-    max-width: 200px;
     margin-right: 16px;
     position: relative;
+    min-width: 70px; /* Auto width to fit content */
 }
+
 
 .interests_input {
     display: inline-block;
     border: none;
     background-color: transparent;
-    width: auto;
-    max-width: 100%;
     font-size: 24px;
     color: #49535C;
     padding: 5px 16px;
     box-sizing: border-box;
-    width: auto;
+    width: auto; /* Ensures the input adjusts to the tag's width */
     white-space: nowrap;
-    /* Verhindert Zeilenumbrüche */
     overflow: hidden;
-    /* Verhindert, dass Text überläuft */
-    /* text-overflow: ellipsis; Zeigt "..." an, wenn der Text zu lang ist */
 }
+
 
 .interests_input:focus {
     outline: none;

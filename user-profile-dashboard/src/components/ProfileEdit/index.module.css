@@ -29,22 +29,10 @@
   margin-top: 5px;
 }
 
-.deleteButton,
-.saveButton {
-  /* border: solid 1px #49535C; */
-  /* padding: 5px 16px;
-  border-radius: 100px;
-  margin: 21px 0;
-  width: 40px;
-  height: 40px; */
-}
-
 .saveButton,
 .deleteButton {
   font-size: 32px;
-  /* Beispielgröße */
-  color: #333;
-  /* Beispiel Farbe */
+  color: #1C1B1F;
 }
 
 .avatarPreview {
@@ -53,10 +41,6 @@
   border-radius: 50%;
   overflow: hidden;
   border: 1px solid #ccc;
-}
-
-.radio_visibility_container {
-  font-size: 24px;
 }
 
 .remove_button {

@@ -6,7 +6,7 @@ import s from './index.module.css';
 
 function ProfilePage() {
     const [profileData, setProfileData] = useState(null);
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
   
     useEffect(() => {
       const storedData = getFromLocalStorage('profileData');

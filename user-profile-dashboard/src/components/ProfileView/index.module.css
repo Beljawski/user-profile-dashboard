@@ -1,11 +1,50 @@
-.avatar_container {
+.avatar_wrapper{
+  display: flex;
+  flex-direction: justify-content;
+}.avatarPreview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+.img_placeholder{
+  flex-direction: justify-content;
+  align-self: center;
+}
+.interests_container {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+.tag_container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 21px 0;
+}
+
+.tag {
+    display: inline-flex;
     align-items: center;
-  }
-  
-  .avatar {
-    border-radius: 50%;
-    object-fit: cover; /* Schneidet das Bild passend zu */
-    border: 2px solid #ccc; /* Optional: Rahmen */
-  }
+    background-color: transparent;
+    border: solid 1px #49535C;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-right: 16px;
+    position: relative;
+    min-width: 70px; /* Auto width to fit content */
+}
+
+
+.interests_input {
+    display: inline-block;
+    border: none;
+    background-color: transparent;
+    font-size: 24px;
+    color: #49535C;
+    padding: 5px 16px;
+    box-sizing: border-box;
+    width: auto; /* Ensures the input adjusts to the tag's width */
+    white-space: nowrap;
+    overflow: hidden;
+}
