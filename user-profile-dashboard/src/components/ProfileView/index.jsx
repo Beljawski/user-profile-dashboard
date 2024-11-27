@@ -65,85 +65,68 @@ function ProfileView({ profileData, onEdit }) {
           </div>
         </div>
 
-{/* Interests */}
-<div className={shared.interests_container}>
-  <label className={shared.label}>The scopes of your interest:</label>
-  <div className={s.tag_container}>
-  {interests.length > 0 ? (
-    interests.map((interest, index) => (
-      interest.trim() ? (
-        <div className={s.tag}>
-        <span  key={interest}
-          className={s.interests_input}>
-          {interest}
-          </span>
-        </div>
-      ) : null
-    ))
-  ) : null}
-    <AiOutlinePlus
-            className={shared.add_button}
-          />
-  </div>
-
-</div>
-        {/* Potential interests */}
+        {/* Interests */}
         <div className={shared.interests_container}>
-        <label className={shared.label}>Potential interests:</label>
-        <div className={s.tag_container}>
-          {potentialInterests.length > 0 ? (
-            potentialInterests.map((interest, index) => (
-              interest.trim() ? (
-                <div className={s.tag}>
-                <span key={index} className={s.interests_input}>
-                  {interest}
-                </span>
-                </div>
-               ) : null
-              ))
-            ) : null}
-                <AiOutlinePlus
-            className={shared.add_button}
-          />
+          <label className={shared.label}>The scopes of your interest:</label>
+          <div className={s.tag_container}>
+            {interests.length > 0
+              ? interests.map((interest, index) =>
+                  interest.trim() ? (
+                    <div className={s.tag}>
+                      <span key={interest} className={s.interests_input}>
+                        {interest}
+                      </span>
+                    </div>
+                  ) : null,
+                )
+              : null}
+            <AiOutlinePlus className={shared.add_button} />
+          </div>
         </div>
+        {/* Potential interests */}
+        <div className={shared.potential_interests_container}>
+          <label className={shared.label}>Potential interests:</label>
+          <div className={s.tag_container}>
+            {potentialInterests.length > 0
+              ? potentialInterests.map((interest, index) =>
+                  interest.trim() ? (
+                    <div className={s.tag}>
+                      <span key={index} className={s.interests_input}>
+                        {interest}
+                      </span>
+                    </div>
+                  ) : null,
+                )
+              : null}
+            <AiOutlinePlus className={shared.add_button} />
+          </div>
         </div>
 
         {/* Links */}
         <div className={shared.links_container}>
-        <label className={shared.label}>Your links:</label>
+          <label className={shared.label}>Your links:</label>
           {links.length > 0
-            ? links.map((link, index) => (
-              link.name.trim() ? (
-                <div key={index} className={shared.link_item}>
-                   <input
-                type="text"
-                value={link.name}
-                
-                className={shared.link_input}
-              />
-              <input
-                type="url"
-                placeholder="URL"
-                value={link.url}
-                className={shared.link_input}
-              />
-              <RiDeleteBin5Line
-                className={shared.remove_icon}
-              />
-                 
-                </div>
-                ) : null
-              ))
+            ? links.map((link, index) =>
+                link.name.trim() ? (
+                  <div key={index} className={shared.link_item}>
+                    <input type="text" value={link.name} className={shared.link_input} />
+                    <input
+                      type="url"
+                      placeholder="URL"
+                      value={link.url}
+                      className={shared.link_input}
+                    />
+                    <RiDeleteBin5Line className={shared.remove_icon} />
+                  </div>
+                ) : null,
+              )
             : null}
-               <AiOutlinePlus
-            className={shared.add_button}
-          />
+          <AiOutlinePlus className={shared.add_button} />
         </div>
         <button type="button" className={shared.button} onClick={onEdit}>
-        Edit
-      </button>
+          Edit
+        </button>
       </div>
-    
     </div>
   );
 }

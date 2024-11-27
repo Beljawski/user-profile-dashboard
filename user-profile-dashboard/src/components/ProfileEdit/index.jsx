@@ -72,6 +72,7 @@ function ProfileEdit({ profileData, onSave }) {
     defaultValues: profileData,
   });
 
+  // States for dynamic fields
   const [interests, setInterests] = useState(profileData?.interests || []);
   const [potentialInterests, setPotentialInterests] = useState(
     profileData?.potentialInterests || [],
@@ -102,6 +103,7 @@ function ProfileEdit({ profileData, onSave }) {
     reader.readAsDataURL(file);
   };
 
+  // Save avatar image as Base64
   const handleSaveAvatar = () => {
     if (editor) {
       const roundedAvatar = editor.getImageScaledToCanvas().toDataURL();
@@ -110,25 +112,29 @@ function ProfileEdit({ profileData, onSave }) {
     }
   };
 
+  // Delete current avatar
   const handleDeleteAvatar = () => {
     setAvatar('');
     setAvatarPreview('');
   };
 
+  // Submit the form with all collected data
   const onSubmit = (data) => {
-    if (avatarError) return;
+    if (avatarError) return; // Prevent submission if avatar error exists
     onSave({ ...data, interests, potentialInterests, links, showProfile, avatar });
   };
 
+  // Render field-specific errors
   const renderError = (fieldName) =>
     errors[fieldName] && <p className={s.error_content}>{errors[fieldName]?.message}</p>;
 
+  // Add a new item to dynamic lists (e.g., interests, links)
   const handleAddItem = (setter, list) => {
     if (list.length >= 10) {
       alert('You can enter a maximum of 10 interests.');
       return;
     }
-    setter([...list, '']); // Fügt ein leeres Element hinzu
+    setter([...list, '']); // Adds a blank entry
   };
 
   const handleUpdateItem = (setter, list, index, value) => {
@@ -137,17 +143,18 @@ function ProfileEdit({ profileData, onSave }) {
       return;
     }
     const updatedList = [...list];
-    updatedList[index] = value; // Aktualisiert das spezifische Element
+    updatedList[index] = value; // Updates the specific item
     setter(updatedList);
   };
 
+  // Remove an item from a dynamic list
   const handleRemoveItem = (setter, list, index) => {
-    const updatedList = list.filter((_, i) => i !== index); // Entfernt das Element
+    const updatedList = list.filter((_, i) => i !== index); // Removes the item
     setter(updatedList);
   };
 
   // Render input fields for dynamic lists (tags or links)
-  const renderTagInputs = (list, setter, placeholder) => (
+  const renderTagInputs = (list, setter) => (
     <div className={shared.tag_container}>
       {list.map((item, index) => (
         <div key={index} className={shared.tag}>
@@ -170,18 +177,17 @@ function ProfileEdit({ profileData, onSave }) {
   );
 
   // Handle dynamic list updates for links (name and url)
-
   const handleAddLink = (setter, list, newItem = '') => {
     if (list.length >= 10) {
       alert('You can enter a maximum of 10 items.');
       return;
     }
-    setter([...list, newItem]); // Fügt ein neues Element hinzu
+    setter([...list, newItem]); // Adds a new entry
   };
-  
+
   const handleUpdateLink = (index, field, value) => {
     const updatedLinks = [...links];
-    updatedLinks[index][field] = value;
+    updatedLinks[index][field] = value; // Updates the specific link field
     setLinks(updatedLinks);
   };
 
@@ -268,7 +274,7 @@ function ProfileEdit({ profileData, onSave }) {
           />
         </div>
 
-        <div className={shared.interests_container}>
+        <div className={shared.potential_interests_container}>
           <label className={shared.label}>Potential interests:</label>
           {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
           <AiOutlinePlus

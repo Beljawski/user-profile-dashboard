@@ -72,9 +72,11 @@
     margin: 16px 16px 16px 0;
     white-space: nowrap;
 }
+
 .radio_visibility_container {
     font-size: 24px;
-  }
+}
+
 .radio_group {
     /* margin-top: 16px; */
     display: flex;
@@ -114,7 +116,6 @@
     align-self: center;
     display: flex;
     align-items: center;
-    /* Vertically center the label text */
 }
 
 .radio_label {
@@ -136,11 +137,18 @@
     flex-wrap: wrap;
 }
 
+.potential_interests_container {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
 .tag_container {
     display: flex;
     flex-wrap: wrap;
     gap: 21px 0;
-    width: 100%; 
 }
 
 .tag {
@@ -152,7 +160,7 @@
     overflow: hidden;
     margin-right: 16px;
     position: relative;
-    min-width: 70px; /* Auto width to fit content */
+    min-width: 70px;
 }
 
 
@@ -164,7 +172,7 @@
     color: #49535C;
     padding: 5px 16px;
     box-sizing: border-box;
-    width: auto; /* Ensures the input adjusts to the tag's width */
+    width: auto;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -174,11 +182,12 @@
     outline: none;
 }
 
-.links_container{
+.links_container {
     display: flex;
     flex-wrap: wrap;
 }
-.link_item{
+
+.link_item {
     box-sizing: border-box;
     width: 100%;
     display: flex;
@@ -187,7 +196,8 @@
     background-color: transparent;
     flex-wrap: wrap;
 }
-.link_input{
+
+.link_input {
     border: none;
     border-bottom: solid 1px #49535C;
     background-color: transparent;
@@ -200,19 +210,21 @@
     width: auto;
     white-space: nowrap;
     overflow: hidden;
-    outline: none; 
+    outline: none;
 }
-.remove_icon{
+
+.remove_icon {
     font-size: 34px;
 }
-.button{
+
+.button {
     display: inline-block;
     background-color: transparent;
     width: auto;
     max-width: 100%;
     font-size: 24px;
     color: #49535C;
-    padding: 5px 16px;    
+    padding: 5px 16px;
     border: solid 1.4px #00000061;
     border-radius: 11px;
 }
@@ -220,4 +232,3 @@
 .button:focus {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.388);
 }
-
