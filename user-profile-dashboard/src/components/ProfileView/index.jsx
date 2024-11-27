@@ -58,7 +58,7 @@ function ProfileView({ profileData, onEdit }) {
           </div>
 
           {/* Links */}
-          <div className={s.links_container}>
+          {/* <div className={s.links_container}>
             <label>Links:</label>
             <div className={s.links_list}>
               {profileData.links?.map((item, index) => (
@@ -67,7 +67,7 @@ function ProfileView({ profileData, onEdit }) {
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <button type="button" className={shared.button} onClick={onEdit}>
             Edit

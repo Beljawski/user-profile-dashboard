@@ -13,7 +13,7 @@ function ProfilePage() {
       if (storedData) {
         setProfileData(storedData); // Daten aus localStorage setzen
       } else {
-        setProfileData({ name: '', lastName: '', jobTitle: '', email: '' }); // Standardwerte
+        setProfileData({ name: '', lastName: '', jobTitle: '', email: '', address: '', pitch: '' }); // Standardwerte
       }
     }, []);
   

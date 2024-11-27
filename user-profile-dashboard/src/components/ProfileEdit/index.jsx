@@ -6,6 +6,7 @@ import ReactAvatarEditor from 'react-avatar-editor';
 import Placeholder from '../../assets/images/avatar_placeholder.svg';
 import { VscSaveAs } from 'react-icons/vsc';
 import { RiDeleteBin5Line } from 'react-icons/ri';
+import { AiOutlinePlus } from 'react-icons/ai';
 
 // Validation rules for form fields
 const validationRules = {
@@ -46,6 +47,20 @@ const validationRules = {
       message: 'You entered the wrong e-mail.',
     },
   },
+  address: {
+    maxLength: { value: 200, message: 'Maximum 200 characters allowed' },
+    pattern: {
+      value: /^[A-Za-zА-Яа-яёЁ0-9\s\-\.\/]+$/,
+      message: 'Only letters, numbers, spaces, and hyphens are allowed',
+    },
+  },
+  pitch: {
+    maxLength: { value: 200, message: 'Maximum 200 characters allowed' },
+    pattern: {
+      value: /^[A-Za-zА-Яа-яёЁ0-9\s\-]+$/,
+      message: 'Only letters, numbers, spaces, and hyphens are allowed',
+    },
+  },
 };
 
 function ProfileEdit({ profileData, onSave }) {
@@ -68,11 +83,10 @@ function ProfileEdit({ profileData, onSave }) {
   const [editor, setEditor] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
 
-    // Handle avatar upload
+  // Handle avatar upload
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
 
     // Check file size (limit: 5 MB)
     if (file.size > 5 * 1024 * 1024) {
@@ -94,7 +108,7 @@ function ProfileEdit({ profileData, onSave }) {
       setAvatarPreview(roundedAvatar);
       setAvatar(roundedAvatar);
     }
-  };  
+  };
 
   const handleDeleteAvatar = () => {
     setAvatar('');
@@ -116,7 +130,7 @@ function ProfileEdit({ profileData, onSave }) {
     }
     setter([...list, '']); // Fügt ein leeres Element hinzu
   };
-  
+
   const handleUpdateItem = (setter, list, index, value) => {
     if (value.length > 30) {
       alert('Each interest must be 30 characters or less.');
@@ -126,7 +140,7 @@ function ProfileEdit({ profileData, onSave }) {
     updatedList[index] = value; // Aktualisiert das spezifische Element
     setter(updatedList);
   };
-  
+
   const handleRemoveItem = (setter, list, index) => {
     const updatedList = list.filter((_, i) => i !== index); // Entfernt das Element
     setter(updatedList);
@@ -134,20 +148,20 @@ function ProfileEdit({ profileData, onSave }) {
 
   // Render input fields for dynamic lists (tags or links)
   const renderTagInputs = (list, setter, placeholder) => (
-    <div className={s.tagContainer}>
+    <div className={shared.tag_container}>
       {list.map((item, index) => (
-        <div key={index} className={s.tag}>
+        <div key={index} className={shared.tag}>
           <input
             type="text"
-            className={s.input}
-            placeholder={`${placeholder} #${index + 1}`}
+            className={shared.interests_input}
+            placeholder={`#${index + 1}`}
             value={item}
             onChange={(e) => handleUpdateItem(setter, list, index, e.target.value)}
           />
           <button
             type="button"
             onClick={() => handleRemoveItem(setter, list, index)}
-            className={s.removeButton}>
+            className={s.remove_button}>
             ✕
           </button>
         </div>
@@ -156,12 +170,21 @@ function ProfileEdit({ profileData, onSave }) {
   );
 
   // Handle dynamic list updates for links (name and url)
+
+  const handleAddLink = (setter, list, newItem = '') => {
+    if (list.length >= 10) {
+      alert('You can enter a maximum of 10 items.');
+      return;
+    }
+    setter([...list, newItem]); // Fügt ein neues Element hinzu
+  };
+  
   const handleUpdateLink = (index, field, value) => {
     const updatedLinks = [...links];
     updatedLinks[index][field] = value;
     setLinks(updatedLinks);
   };
-  
+
   return (
     <div className={shared.profile_container}>
       <form className={shared.content_container} onSubmit={handleSubmit(onSubmit)}>
@@ -204,29 +227,30 @@ function ProfileEdit({ profileData, onSave }) {
 
         {/* Standard input fields */}
         <div className={shared.input_container}>
-        {['name', 'lastName', 'jobTitle', 'phone', 'email'].map((field) => (
-          <div key={field}>
-            <input
-              type={field === 'email' ? 'email' : 'text'}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              className={shared.input}
-              {...register(field, validationRules[field])}
-            />
-            {renderError(field)}
-          </div>
-        ))}
-</div>
+          {['name', 'lastName', 'jobTitle', 'phone', 'email', 'address', 'pitch'].map((field) => (
+            <div key={field}>
+              <input
+                type={field === 'email' ? 'email' : 'text'}
+                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                className={shared.input}
+                {...register(field, validationRules[field])}
+              />
+              {renderError(field)}
+            </div>
+          ))}
+        </div>
         {/* Radio buttons for profile visibility */}
         <div className={s.radio_visibility_container}>
           <label className={shared.label}>Show your profile in Launchpad?</label>
-          <div className={s.radioGroup}>
+          <div className={shared.radio_group}>
             {['private', 'public'].map((option) => (
-              <label key={option}>
+              <label key={option} className={shared.radio_label}>
                 <input
                   type="radio"
                   value={option}
                   checked={showProfile === option}
                   onChange={() => setShowProfile(option)}
+                  className={shared.radio_input}
                 />
                 {option.charAt(0).toUpperCase() + option.slice(1)}
               </label>
@@ -235,57 +259,53 @@ function ProfileEdit({ profileData, onSave }) {
         </div>
 
         {/* Dynamic fields for interests, potential interests, and links */}
-        <div>
+        <div className={shared.interests_container}>
           <label className={shared.label}>The scopes of your interest:</label>
-          <button type="button" onClick={() => handleAddItem(setInterests, interests)}>
-            +
-          </button>
           {renderTagInputs(interests, setInterests, 'Interest')}
+          <AiOutlinePlus
+            className={shared.add_button}
+            onClick={() => handleAddItem(setInterests, interests)}
+          />
         </div>
 
-        <div>
+        <div className={shared.interests_container}>
           <label className={shared.label}>Potential interests:</label>
-          <button
-            type="button"
-            onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}>
-            +
-          </button>
           {renderTagInputs(potentialInterests, setPotentialInterests, 'Potential Interest')}
+          <AiOutlinePlus
+            className={shared.add_button}
+            onClick={() => handleAddItem(setPotentialInterests, potentialInterests)}
+          />
         </div>
 
         {/* Dynamic Links */}
-        <div className={s.links_container}>
+        <div className={shared.links_container}>
           <label className={shared.label}>Your links:</label>
           {links.map((link, index) => (
-            <div key={index} className={s.link_item}>
+            <div key={index} className={shared.link_item}>
               <input
                 type="text"
                 placeholder="Site Name"
                 value={link.name}
                 onChange={(e) => handleUpdateLink(index, 'name', e.target.value)}
-                className={s.input}
+                className={shared.link_input}
               />
               <input
                 type="url"
                 placeholder="URL"
                 value={link.url}
                 onChange={(e) => handleUpdateLink(index, 'url', e.target.value)}
-                className={s.input}
+                className={shared.link_input}
               />
-              <button
-                type="button"
+              <RiDeleteBin5Line
+                className={shared.remove_icon}
                 onClick={() => handleRemoveItem(setLinks, links, index)}
-                className={s.remove_button}>
-                ✕
-              </button>
+              />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => handleAddItem(setLinks, links, { name: '', url: '' })}
-            className={shared.button}>
-            + Add Link
-          </button>
+          <AiOutlinePlus
+            className={shared.add_button}
+            onClick={() => handleAddLink(setLinks, links, { name: '', url: '' })}
+          />
         </div>
 
         {/* Submit */}

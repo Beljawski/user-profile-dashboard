@@ -5,26 +5,32 @@
 .img_placeholder {
   cursor: pointer;
 }
-.avatar_wrapper{
+
+.avatar_wrapper {
   width: 120px;
   height: 120px;
- 
+
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer; /* Zeigt, dass die Fläche klickbar ist */
+  cursor: pointer;
+  /* Zeigt, dass die Fläche klickbar ist */
 }
 
 .avatar_wrapper:hover {
-  background-color: #ececec; /* Visuelles Feedback bei Hover */
+  background-color: #ececec;
+  /* Visuelles Feedback bei Hover */
 }
+
 .error_content {
   color: red;
   font-size: 12px;
   margin-top: 5px;
 }
-.deleteButton, .saveButton{
+
+.deleteButton,
+.saveButton {
   /* border: solid 1px #49535C; */
   /* padding: 5px 16px;
   border-radius: 100px;
@@ -33,9 +39,12 @@
   height: 40px; */
 }
 
-.saveButton, .deleteButton  {
-  font-size: 32px; /* Beispielgröße */
-  color: #333; /* Beispiel Farbe */
+.saveButton,
+.deleteButton {
+  font-size: 32px;
+  /* Beispielgröße */
+  color: #333;
+  /* Beispiel Farbe */
 }
 
 .avatarPreview {
@@ -45,41 +54,17 @@
   overflow: hidden;
   border: 1px solid #ccc;
 }
-.radio_visibility_container{
+
+.radio_visibility_container {
   font-size: 24px;
 }
-.tagContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
 
-.tag {
-  display: flex;
-  align-items: center;
-  background-color: #f1f1f1;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.tag input {
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  width: auto;
-  max-width: 100px;
-}
-
-.removeButton {
+.remove_button {
   background: transparent;
   border: none;
-  color: #ff0000;
+  color: #49535C;
   font-size: 14px;
   cursor: pointer;
-  margin-left: 5px;
-}
-
-.removeButton:hover {
-  color: #cc0000;
+  position: absolute;
+  right: 10px;
 }
