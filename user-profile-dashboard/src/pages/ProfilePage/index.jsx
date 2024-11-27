@@ -24,6 +24,7 @@ function ProfilePage() {
     saveToLocalStorage('profileData', data);
     setIsEditing(false);
   };
+console.log(profileData);
 
   return (
     <div className={s.profile_page}>
